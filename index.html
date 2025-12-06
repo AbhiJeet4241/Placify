@@ -56,9 +56,6 @@
     <header class="bg-white shadow-md">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-2xl font-bold text-blue-800">Placify</div>
-            <div class="text-sm font-semibold text-gray-600">
-                Acropolis Institute (AIML) Edition
-            </div>
             <div>
                 <a href="#" class="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800">Login</a>
             </div>
@@ -70,7 +67,7 @@
 
         <!-- 
         ==================================================
-        SCREENSHOT SECTION 1: ASSESSMENT MODE SELECTION
+        SECTION 1: ASSESSMENT MODE SELECTION
         ==================================================
         -->
         <section id="mode-selection" class="text-center py-16">
@@ -89,7 +86,7 @@
                     </div>
                     <h2 class="text-2xl font-semibold mb-3">Fast Mode</h2>
                     <p class="text-gray-600 mb-6">10 quick MCQs. Get a baseline readiness score in 5 minutes.</p>
-                    <a href="#"
+                    <a href="#" onclick="startAssessment('fast'); return false;"
                         class="w-full block py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Start
                         Fast Assessment</a>
                 </div>
@@ -105,7 +102,7 @@
                     </div>
                     <h2 class="text-2xl font-semibold mb-3">Balanced Mode</h2>
                     <p class="text-gray-600 mb-6">20 MCQs & short answers. Deeper analysis of your skills.</p>
-                    <a href="#"
+                    <a href="#" onclick="startAssessment('balanced'); return false;"
                         class="w-full block py-3 px-6 bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-800">Start
                         Balanced Assessment</a>
                 </div>
@@ -121,7 +118,7 @@
                     </div>
                     <h2 class="text-2xl font-semibold mb-3">Detailed Mode</h2>
                     <p class="text-gray-600 mb-6">30+ questions. Upload your resume for a full RAG-driven analysis.</p>
-                    <a href="#"
+                    <a href="#" onclick="startAssessment('detailed'); return false;"
                         class="w-full block py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Start
                         Detailed Assessment</a>
                 </div>
@@ -130,10 +127,25 @@
 
         <!-- 
         ==================================================
-        SCREENSHOT SECTION 2: ASSESSMENT IN PROGRESS
+        SECTION 2: RESUME UPLOADER
         ==================================================
         -->
-        <section id="assessment" class="bg-white rounded-lg shadow-lg p-8 md:p-12 my-16 max-w-4xl mx-auto">
+        <section id="resume-section" class="bg-white rounded-lg shadow-lg p-8 md:p-12 my-16 max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Upload Resume</h2>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center">
+                <p class="text-gray-500">Drag & drop your resume (PDF, DOCX) or</p>
+                <a href="#" class="text-blue-600 font-semibold">browse files</a>
+                <p class="text-xs text-gray-400 mt-2">Privacy-First: Your resume is optional and is not stored without
+                    permission.</p>
+            </div>
+        </section>
+
+        <!-- 
+        ==================================================
+        SECTION 3: DETAILED ASSESSMENT / REPORT
+        ==================================================
+        -->
+        <section id="detailed-assessment" class="bg-white rounded-lg shadow-lg p-8 md:p-12 my-16 max-w-4xl mx-auto">
             <h2 class="text-3xl font-bold text-center mb-8">Balanced Assessment</h2>
 
             <!-- Progress Bar -->
@@ -171,17 +183,6 @@
                     placeholder="Briefly describe the project, your role, and the technology used..."></textarea>
             </div>
 
-            <!-- Mock Resume Upload -->
-            <div class="mb-10">
-                <h3 class="text-xl font-semibold mb-4">Optional: Upload Resume</h3>
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center">
-                    <p class="text-gray-500">Drag & drop your resume (PDF, DOCX) or</p>
-                    <a href="#" class="text-blue-600 font-semibold">browse files</a>
-                    <p class="text-xs text-gray-400 mt-2">Privacy-First: Your resume is optional and is not stored
-                        without permission.</p>
-                </div>
-            </div>
-
             <!-- Navigation -->
             <div class="flex justify-between">
                 <a href="#"
@@ -193,7 +194,7 @@
 
         <!-- 
         ==================================================
-        SCREENSHOT SECTION 3: GENERATED REPORT
+        SECTION 3.5: GENERATED REPORT (Part of Assessment flow)
         ==================================================
         -->
         <section id="report" class="bg-white rounded-lg shadow-lg p-8 md:p-12 my-16">
@@ -278,31 +279,37 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
 
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold mb-4">Generated Communication Drafts</h3>
-                        <div class="border rounded-lg mb-3 p-4 bg-white">
-                            <h4 class="font-semibold text-blue-700 mb-2">Draft: Email to TCS Recruiter</h4>
-                            <textarea class="w-full p-3 border rounded-lg text-gray-600 h-40"
-                                readonly>Subject: Interest in Data Analyst position - Rohit Chawda
+        <!-- 
+        ==================================================
+        SECTION 4: DRAFT EMAIL BOX
+        ==================================================
+        -->
+        <section id="email-drafts" class="bg-white rounded-lg shadow-lg p-8 md:p-12 my-16 max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">Generated Communication Drafts</h2>
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <div class="border rounded-lg mb-3 p-4 bg-white">
+                    <h4 class="font-semibold text-blue-700 mb-2">Draft: Email to TCS Recruiter</h4>
+                    <textarea class="w-full p-3 border rounded-lg text-gray-600 h-40"
+                        readonly>Subject: Interest in Data Analyst position - Rohit Chawda
 
 Dear [Hiring Manager],
 
 I am writing to express my strong interest in the Data Analyst position at TCS, as recommended by the Acropolis placement assistance program... (complete AI-generated draft)</textarea>
-                        </div>
-                        <details class="border rounded-lg">
-                            <summary class="p-4 cursor-pointer font-semibold text-blue-700">Draft: Resume Summary
-                                Improvement</summary>
-                            <div class="p-4 border-t bg-white">
-                                <p class="text-gray-600">"Aspiring AI/ML Engineer with a strong foundation in Python and
-                                    ensemble models, seeking to apply data-driven insights to solve complex problems..."
-                                </p>
-                            </div>
-                        </details>
-                    </div>
                 </div>
+                <details class="border rounded-lg">
+                    <summary class="p-4 cursor-pointer font-semibold text-blue-700">Draft: Resume Summary
+                        Improvement</summary>
+                    <div class="p-4 border-t bg-white">
+                        <p class="text-gray-600">"Aspiring AI/ML Engineer with a strong foundation in Python and
+                            ensemble models, seeking to apply data-driven insights to solve complex problems..."
+                        </p>
+                    </div>
+                </details>
             </div>
-
         </section>
 
     </main>
@@ -313,6 +320,7 @@ I am writing to express my strong interest in the Data Analyst position at TCS, 
         <p class="text-sm">Acropolis Institute of Technology and Research, Indore</p>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 
 </html>
