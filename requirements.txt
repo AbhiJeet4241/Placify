@@ -10,4 +10,3 @@ google-genai
 python-dotenv
 fpdf
 pypdf
-dotenv

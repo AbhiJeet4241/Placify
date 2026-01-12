@@ -25,21 +25,15 @@ os.makedirs(PDF_DIR, exist_ok=True)
 os.makedirs(ANALYSIS_DIR, exist_ok=True)
 
 # =================================== API Keys Setup ====================================
-API_KEY_FILE = ENV_DIR / "gemini_api.txt"
+ENV_FILE = ENV_DIR / ".env"
 
-def load_api_key():
-    try:
-        if not API_KEY_FILE.exists():
-             print(f"Error: API key file not found at {API_KEY_FILE}")
-             return None
-        with open(API_KEY_FILE, "r") as f:
-            content = f.read().strip()
-            # Handle cases where the file contains "GEMINI_API_KEY = ..."
-            if "=" in content:
-                return content.split("=", 1)[1].strip()
-            return content
-    except Exception as e:
-        print(f"Error reading API key: {e}")
-        return None
+# Load the environment variables from the specific .env file
+if ENV_FILE.exists():
+    load_dotenv(dotenv_path=ENV_FILE)
+else:
+    print(f"Warning: .env file not found at {ENV_FILE}")
 
-GEMINI_API_KEY = load_api_key()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    print("Warning: GEMINI_API_KEY not found in environment variables.")

@@ -1,3 +1,11 @@
+# Temporary files before pushing to GitHub
+web_data/
+#company_dataset/
+*.mermaid
+manual.txt
+security_audit.md.resolved
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -135,6 +143,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+*placify_env
 
 # Spyder project settings
 .spyderproject

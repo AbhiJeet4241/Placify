@@ -109,6 +109,6 @@ def rank_companies(user_profile_text, companies, user_preferences=None):
     
     # Debug: Print top scores and companies
     print(f"Top 5 scores: {[s[0] for s in scored_companies[:5]]}")
-    print(f"Top 5 companies: {[s[1] for s in scored_companies[:5]]}")
+    print(f"Top 5 companies names: {[s[1]['name'] for s in scored_companies[:5]]}")
     
     return [c[1] for c in scored_companies[:5]]

@@ -59,16 +59,35 @@ def analyze_profile(user_context, candidates_json, mode, answers, resume_extract
     
     Return ONLY valid JSON.
     """
+    try:
+        print(f"Sending prompt to Gemini with Model: {model} ...")
+        
+# ---------------- if Gemini API is overloaded ----------------        
+        max_retries = 3
+        retry_delay = 2 # seconds
+        response = None
+
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt
+                )
+                print("Received response.")
+                break # Success, exit loop
+            except Exception as e:
+                error_str = str(e)
+                if "503" in error_str and attempt < max_retries - 1:
+                    print(f"Gemini 503 Overloaded. Retrying in {retry_delay}s... (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(retry_delay)
+                    retry_delay *= 2 # Exponential backoff
+                else:
+                    raise e
+        
+        if not response:
+            raise Exception("Failed to get response from Gemini after retries")
 
 # ---------------- to store response from Gemini ----------------
-    try:
-        print("Sending prompt to Gemini...")
-        response = client.models.generate_content(
-            model=model,
-            contents=prompt
-        )
-        print("Received response.")
-        
         text_response = response.text.replace('```json', '').replace('```', '').strip()
         if text_response.startswith('json'):
             text_response = text_response[4:].strip()
