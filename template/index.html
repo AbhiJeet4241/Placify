@@ -17,7 +17,7 @@
 
     <!-- =========== HEADER =========== -->
     <header class="app-header">
-        <nav class="container flex justify-between items-center" style="padding-top: 1rem; padding-bottom: 1rem;">
+        <nav class="container flex justify-between items-center py-4">
             <div class="logo-text">Placify</div>
             <!-- Simple Single Page Header -->
             <div class="sub-header-text">AI Placement Readiness</div>
@@ -25,7 +25,7 @@
     </header>
 
     <!-- =========== MAIN CONTENT =========== -->
-    <main class="container" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <main class="container py-6">
 
         <!-- 
         ==================================================
@@ -34,12 +34,12 @@
         -->
         <section id="mode-selection" class="text-center my-16">
             <h1 class="mb-4">Welcome, Student!</h1>
-            <p class="mb-12" style="font-size: 1.125rem;">Select your assessment mode to get a personalized, AI-driven
+            <p class="mb-12 text-lg">Select your assessment mode to get a personalized, AI-driven
                 placement report.</p>
 
             <div class="feature-grid md-grid-cols-3">
                 <!-- Fast Mode Card -->
-                <div class="card-base card-hover" style="padding: 2rem;">
+                <div class="card-base card-hover p-8">
                     <div class="text-blue-600 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon-lg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -53,7 +53,7 @@
                 </div>
 
                 <!-- Balanced Mode Card -->
-                <div class="card-base card-hover" style="padding: 2rem;">
+                <div class="card-base card-hover p-8">
                     <div class="text-blue-600 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon-lg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -63,13 +63,12 @@
                     </div>
                     <h2 class="mb-3">Balanced Mode</h2>
                     <p class="mb-6">20 MCQs & short answers. Deeper analysis of your skills.</p>
-                    <button onclick="startAssessment('balanced')" class="btn btn-primary w-full"
-                        style="background-color: var(--blue-700);">Start
+                    <button onclick="startAssessment('balanced')" class="btn btn-primary w-full bg-blue-700">Start
                         Balanced Assessment</button>
                 </div>
 
                 <!-- Detailed Mode Card -->
-                <div class="card-base card-hover" style="padding: 2rem;">
+                <div class="card-base card-hover p-8">
                     <div class="text-blue-600 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon-lg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -90,28 +89,27 @@
         SECTION 2: RESUME UPLOADER
         ==================================================
         -->
-        <section id="resume-section" class="card-base my-16 mx-auto md-p-12" style="max-width: 56rem; padding: 2rem;">
+        <section id="resume-section" class="card-base my-16 mx-auto md-p-12 max-w-4xl p-8">
             <h2 class="text-center mb-8">Upload Resume</h2>
             <!-- File Upload Area -->
             <div class="upload-area flex flex-col items-center justify-center p-10 mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon-lg text-gray-400 mb-4" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color: var(--gray-400);">
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p class="mb-2" style="color: var(--gray-600);">Drag & drop your resume (PDF/Docx)</p>
+                <p class="mb-2">Drag & drop your resume (PDF/Docx)</p>
                 <input type="file" id="resume-upload" class="hidden" accept=".pdf,.doc,.docx" />
-                <button onclick="document.getElementById('resume-upload').click()"
-                    class="text-blue-600 font-semibold hover:underline"
-                    style="border: none; background: none; cursor: pointer;">Browse Files</button>
+                <button onclick="document.getElementById('resume-upload').click()" class="btn-link">Browse
+                    Files</button>
             </div>
 
             <div class="text-center mt-6">
-                <button onclick="uploadResume()" class="btn btn-primary" style="margin-right: 1rem;">Upload
+                <button onclick="uploadResume()" class="btn btn-primary mr-4">Upload
                     Resume</button>
                 <button onclick="analyzeResumeOnly()" class="btn btn-secondary">Analyze Resume Only</button>
             </div>
-            <p class="mt-4 text-center" style="font-size: 0.75rem; color: var(--gray-400);">Privacy-First: Your resume
+            <p class="mt-4 text-center text-xs text-gray-400">Privacy-First: Your resume
                 is optional and is not stored
                 without permission. Saved to web_data/resume.</p>
         </section>
@@ -121,8 +119,7 @@
         SECTION 3: DETAILED ASSESSMENT / REPORT
         ==================================================
         -->
-        <section id="detailed-assessment" class="card-base my-16 mx-auto hidden md-p-12"
-            style="max-width: 56rem; padding: 2rem;">
+        <section id="detailed-assessment" class="card-base my-16 mx-auto hidden md-p-12 max-w-4xl p-8">
             <h2 class="text-center mb-8">Personalized Assessment</h2>
 
             <form id="assessment-form" onsubmit="event.preventDefault(); submitAssessment();">
@@ -146,7 +143,7 @@
         SECTION 3.5: GENERATED REPORT (Part of Assessment flow)
         ==================================================
         -->
-        <section id="report" class="card-base my-16 hidden md-p-12" style="padding: 2rem;">
+        <section id="report" class="card-base my-16 hidden md-p-12 p-8">
             <h2 class="text-center mb-4">Your Personalized Career Report</h2>
             <div class="text-center mb-10">
                 <a href="/api/report/pdf" download="Placement_Report.pdf" class="btn btn-success">
@@ -157,22 +154,20 @@
             <div class="feature-grid md-grid-cols-3">
                 <!-- Left Column: Score and Stats -->
                 <div class="md-col-span-1 space-y-6">
-                    <div class="text-center"
-                        style="background-color: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem;">
-                        <h3 class="mb-4" style="color: var(--gray-600);">Readiness Score</h3>
-                        <div class="progress-circle mx-auto"
-                            style="width: 100px; height: 100px; border-radius: 50%; border: 5px solid #ccc; position: relative;color: #0fc771;">
+                    <div class="text-center bg-gray-50 p-6 rounded-md">
+                        <h3 class="mb-4 text-gray-600">Readiness Score</h3>
+                        <div class="progress-circle mx-auto">
                             <span id="readiness-score-display">0%</span>
                         </div>
                         <p class="mt-4">Based on your answers and analysis.</p>
                     </div>
-                    <div style="background-color: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem;">
+                    <div class="bg-gray-50 p-6 rounded-md">
                         <h3 class="mb-4">Key Strengths</h3>
                         <ul class="list-disc list-inside space-y-2 text-green-700">
                             <!-- Dynamic Strengths -->
                         </ul>
                     </div>
-                    <div style="background-color: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem;">
+                    <div class="bg-gray-50 p-6 rounded-md">
                         <h3 class="mb-4">Improvement Gaps</h3>
                         <ul class="list-disc list-inside space-y-2 text-red-700">
                             <!-- Dynamic Gaps -->
@@ -182,15 +177,15 @@
 
                 <!-- Right Column: Action Plan and Jobs -->
                 <div class="md-col-span-2 space-y-6">
-                    <div style="background-color: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem;">
-                        <h3 class="mb-4" style="font-size: 1.25rem;">Your AI-Generated Action Plan</h3>
+                    <div class="bg-gray-50 p-6 rounded-md">
+                        <h3 class="mb-4 text-lg">Your AI-Generated Action Plan</h3>
                         <ol class="list-decimal list-inside space-y-3">
                             <!-- Dynamic Action Plan -->
                         </ol>
                     </div>
 
-                    <div style="background-color: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem;">
-                        <h3 class="mb-4" style="font-size: 1.25rem;">Top Job Recommendations (RAG-Powered)</h3>
+                    <div class="bg-gray-50 p-6 rounded-md">
+                        <h3 class="mb-4 text-lg">Top Job Recommendations (RAG-Powered)</h3>
                         <div class="space-y-4">
                             <!-- Dynamic Jobs -->
                         </div>
@@ -204,19 +199,17 @@
         SECTION 4: DRAFT EMAIL BOX
         ==================================================
         -->
-        <section id="email-drafts" class="card-base my-16 mx-auto md-p-12" style="max-width: 56rem; padding: 2rem;">
+        <section id="email-drafts" class="card-base my-16 mx-auto md-p-12 max-w-4xl p-8">
             <h2 class="text-center mb-8">Generated Communication Drafts</h2>
-            <div style="background-color: var(--gray-50); padding: 1.5rem; border-radius: 0.5rem;">
-                <div
-                    style="border: 1px solid var(--gray-200); border-radius: 0.5rem; margin-bottom: 0.75rem; padding: 1rem; background-color: white;">
-                    <h4 class="mb-2" style="font-weight: 600; color: var(--blue-700);">Draft: Recruiter Email</h4>
+            <div class="bg-gray-50 p-6 rounded-md">
+                <div class="border-gray-200 rounded-md mb-2 p-4 bg-white">
+                    <h4 class="mb-2 font-semibold text-blue-700">Draft: Recruiter Email</h4>
                     <textarea id="email-draft-output" class="textarea-input"
                         placeholder="Select a job above to generate a draft email..." readonly></textarea>
                 </div>
                 <!-- Copy Button -->
                 <div class="text-right">
-                    <button onclick="copyDraftText()" class="btn btn-primary flex items-center justify-center"
-                        style="display: inline-flex; gap: 0.5rem;">
+                    <button onclick="copyDraftText()" class="btn btn-primary flex-center-gap">
                         <svg xmlns="http://www.w3.org/2000/svg" style="height: 1.25rem; width: 1.25rem;" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -224,7 +217,7 @@
                         </svg>
                         Copy to Clipboard
                     </button>
-                    <p id="copy-feedback" class="hidden mt-2" style="color: var(--green-600); font-size: 0.875rem;">
+                    <p id="copy-feedback" class="hidden mt-2 text-green-600 text-xs text-right">
                         Copied to clipboard!</p>
                 </div>
             </div>
@@ -233,10 +226,9 @@
     </main>
 
     <!-- =========== FOOTER =========== -->
-    <footer class="text-center mt-16"
-        style="background-color: var(--gray-800); color: var(--gray-300); padding: 1.5rem;">
-        <p style="color: var(--gray-300);">&copy; 2025 Placify</p>
-        <p style="font-size: 0.875rem; color: var(--gray-300);">Acropolis Institute of Technology and Research, Indore
+    <footer class="text-center mt-16 bg-gray-800 p-6 text-gray-400">
+        <p class="text-gray-400">&copy; 2025 Placify</p>
+        <p class="text-xs text-gray-400">Acropolis Institute of Technology and Research, Indore
         </p>
     </footer>
 
