@@ -1,12 +1,9 @@
 fastapi
 uvicorn
-python-multipart
-pydantic
-numpy
-pandas
-scikit-learn
-google
-google-genai
 python-dotenv
-fpdf
+google-genai
 pypdf
+fpdf
+pydantic
+python-multipart
+pandas

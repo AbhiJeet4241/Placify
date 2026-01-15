@@ -25,13 +25,21 @@ os.makedirs(PDF_DIR, exist_ok=True)
 os.makedirs(ANALYSIS_DIR, exist_ok=True)
 
 # =================================== API Keys Setup ====================================
-ENV_FILE = ENV_DIR / ".env"
+ENV_FILES = [
+    BASE_DIR / ".env",              # Standard location (Root)
+    ENV_DIR / ".env"                # Custom location
+]
 
-# Load the environment variables from the specific .env file
-if ENV_FILE.exists():
-    load_dotenv(dotenv_path=ENV_FILE)
-else:
-    print(f"Warning: .env file not found at {ENV_FILE}")
+loaded = False
+for env_path in ENV_FILES:
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+        print(f"Loaded environment from {env_path}")
+        loaded = True
+        break
+
+if not loaded:
+    print(f"Warning: No .env file found. Checked: {[str(p) for p in ENV_FILES]}")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
