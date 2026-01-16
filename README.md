@@ -70,7 +70,7 @@ Placify-v1/
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/AbhiJeet4241/Placify.git
+   git clone https://github.com/rohit483/Placify.git
    cd Placify
    ```
 2. **Set up Virtual Environment (Optional but Recommended)**
