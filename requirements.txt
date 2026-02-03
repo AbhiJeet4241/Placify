@@ -7,3 +7,5 @@ fpdf
 pydantic
 python-multipart
 pandas
+groq
+requests
