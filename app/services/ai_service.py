@@ -1,36 +1,94 @@
 import json
 import os
 import time
+import requests
 from google import genai
+from groq import Groq
 
-from app.config import GEMINI_API_KEY, ANALYSIS_DIR
+from app.config import GEMINI_API_KEY, GROQ_API_KEY, ANALYSIS_DIR
 
 # ================================ LLM Model Setup =============================
-client = None
-model = None
+gemini_client = None
+groq_client = None
 
-if GEMINI_API_KEY: # Model Setup
-    client = genai.Client(api_key=GEMINI_API_KEY)
-    model = 'gemini-2.5-flash'
-else:
-    print("Warning: Gemini API Key not loaded. AI features will not work.")
+# Initialize Gemini Client
+if GEMINI_API_KEY:
+    try:
+        gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+    except Exception as e:
+        print(f"Failed to init Gemini: {e}")
 
-# ========================= Function to analyze user profile ========================= 
+# Initialize Groq Client
+if GROQ_API_KEY:
+    try:
+        groq_client = Groq(api_key=GROQ_API_KEY)
+    except Exception as e:
+        print(f"Failed to init Groq: {e}")
+
+# ============================== Helper Functions =============================
+# ----------------------- Function to call Gemini -----------------------
+def call_gemini(prompt):
+    if not gemini_client:
+        raise Exception("Gemini Client not initialized")
+    
+    response = gemini_client.models.generate_content(
+        model='gemini-2.0-flash',
+        contents=prompt
+    )
+    return response.text
+
+# ----------------------- Function to call Groq -----------------------
+def call_groq(prompt):
+    if not groq_client:
+        raise Exception("Groq Client not initialized")
+    
+    chat_completion = groq_client.chat.completions.create(
+        messages=[
+            {"role": "system", "content": "You are a JSON-only response bot. Output ONLY valid JSON."},
+            {"role": "user", "content": prompt}
+        ],
+        model="llama-3.3-70b-versatile",
+        response_format={"type": "json_object"}
+    )
+    return chat_completion.choices[0].message.content
+
+# Function to call Ollama
+def call_ollama(prompt):
+    url = "http://localhost:11434/api/generate" #add localhost llm url
+    payload = {
+        "model": "gemma3:4b",
+        "prompt": prompt + "\nRespond with JSON only.",
+        "stream": False,
+        "format": "json" 
+    }
+    try:
+        response = requests.post(url, json=payload, timeout=60) # 60s timeout for local
+        if response.status_code == 200:
+            return response.json().get('response', '')
+        else:
+            raise Exception(f"Ollama status: {response.status_code}")
+    except Exception as e:
+        raise Exception(f"Ollama connection failed: {e}")
+# ============================== Response Cleaning =============================
+# Function to clean JSON response
+def clean_json_response(text_response):
+    try:
+        text_response = text_response.replace('```json', '').replace('```', '').strip()
+        if text_response.startswith('json'):
+            text_response = text_response[4:].strip()
+        return json.loads(text_response)
+    except:
+        # Last cleanup attempt
+        start = text_response.find('{')
+        end = text_response.rfind('}') + 1
+        if start != -1 and end != -1:
+            return json.loads(text_response[start:end])
+        raise
+
+# ========================= Main Analysis Function ========================= 
 def analyze_profile(user_context, candidates_json, mode, answers, resume_extracted):
-    if not client:
-        # Mock Data if Key not loaded
-        print("Using Mock Data (No API Key)")
-        return {
-            "readiness_score": 75,
-            "strengths": ["Mock Strength 1", "Mock Strength 2"],
-            "gaps": ["Mock Gap 1", "Mock Gap 2"],
-            "action_plan": ["Mock Action 1", "Mock Action 2"],
-            "email_draft": "Mock Email Draft",
-            "candidate_name": "Mock Student",
-            "job_recommendations": []
-        }
-
-# ---------------- Prompt to analyze profile ----------------
+    
+    # Standard Prompt
     prompt = f"""
     Act as a career counselor. Analyze the following student profile and the provided list of matched companies.
     
@@ -52,80 +110,61 @@ def analyze_profile(user_context, candidates_json, mode, answers, resume_extract
       - role: Role
       - location: Location
       - match: Match Reason (Short string)
-      - email_draft: A specific cold email draft to this company's HR. 
-        The email must be professional, mention the specific role, and highlight the student's relevant strengths.
-    
+      - email_draft: A specific cold email draft to this company's HR.
     - email_draft: (Legacy field, keep generic) "Generic inquiry..."
     
     Return ONLY valid JSON.
     """
+
+    ai_data = None
+    
+    # Provider Chain
+    providers = [
+        ("Gemini", call_gemini),
+        ("Groq", call_groq),
+        ("Ollama", call_ollama)
+    ]
+    
+    for name, func in providers:
+        try:
+            print(f"Attempting Provider: {name}")
+            raw_text = func(prompt)
+            ai_data = clean_json_response(raw_text)
+            if ai_data:
+                print(f"Success with {name}")
+                break
+        except Exception as e:
+            print(f"{name} Failed/Skipped: {e}")
+            continue
+
+    # Final Fallback (Mock) if all failed
+    if not ai_data:
+        print("All AI Providers failed. Using Mock Data.")
+        return {
+            "readiness_score": 0,
+            "strengths": ["System Error"],
+            "gaps": ["AI Service Unavailable"],
+            "action_plan": ["Please check API keys or local Ollama"],
+            "email_draft": "Error",
+            "candidate_name": "Student",
+            "job_recommendations": []
+        }
+
+    # Save Log
     try:
-        print(f"Sending prompt to Gemini with Model: {model} ...")
-        
-# ---------------- if Gemini API is overloaded ----------------        
-        max_retries = 3
-        retry_delay = 2 # seconds
-        response = None
-
-        for attempt in range(max_retries):
-            try:
-                response = client.models.generate_content(
-                    model=model,
-                    contents=prompt
-                )
-                print("Received response.")
-                break # Success, exit loop
-            except Exception as e:
-                error_str = str(e)
-                if "503" in error_str and attempt < max_retries - 1:
-                    print(f"Gemini 503 Overloaded. Retrying in {retry_delay}s... (Attempt {attempt + 1}/{max_retries})")
-                    time.sleep(retry_delay)
-                    retry_delay *= 2 # Exponential backoff
-                else:
-                    raise e
-        
-        if not response:
-            raise Exception("Failed to get response from Gemini after retries")
-
-# ---------------- to store response from Gemini ----------------
-        text_response = response.text.replace('```json', '').replace('```', '').strip()
-        if text_response.startswith('json'):
-            text_response = text_response[4:].strip()
-        
-        ai_data = json.loads(text_response) #gemini response
-        
-        # Creating analysis file
         timestamp = int(time.time())
-        analysis_filename = f"analysis_{timestamp}.json"
-        analysis_path = os.path.join(ANALYSIS_DIR, analysis_filename)
-        
-        # Saving analysis file
+        analysis_path = os.path.join(ANALYSIS_DIR, f"analysis_{timestamp}.json")
         with open(analysis_path, "w") as f:
             json.dump({
                 "timestamp": timestamp,
                 "mode": mode,
-                "submission": answers,
-                "resume_extracted": resume_extracted,
-                "candidates_provided": json.loads(candidates_json),
-                "gemini_response": ai_data
+                "provider_used": "unknown",
+                "response": ai_data
             }, f, indent=4)
-        print(f"Analysis saved to {analysis_path}")
+    except:
+        pass
         
-        return ai_data #final response
-
-# ---------------- Mock Data, if Gemini error even after key loaded ----------------
-    except Exception as e:
-        print(f"Gemini Error: {e}")
-        # Return Error fallback structure
-        return {
-            "candidate_name": "Student",
-            "readiness_score": 0,
-            "strengths": [],
-            "gaps": [],
-            "action_plan": [],
-            "email_draft": "Error generating report.",
-            "job_recommendations": []
-        }
+    return ai_data
 
 # ========================== Orchestration Logic =============================
 from app.quiz import QUESTIONS_DB, companies_data
@@ -138,7 +177,7 @@ def run_full_assessment(submission):
     Orchestrates the full assessment flow:
     1. Prepare Context (Answers + Resume)
     2. Rank Companies (Hard Filter + Regex Score)
-    3. Analyze with AI (Gemini)
+    3. Analyze with AI
     4. Generate PDF Report
     """
 
